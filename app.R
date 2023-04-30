@@ -93,12 +93,12 @@ SAFFI_table <- read_excel("HI_Microbial_hazards_identification_processed_databas
 PTE_DES <- read_excel("HI_Microbial_hazards_identification_processed_database.xlsx", sheet = "Step_2_PEdes", skip=2)
 
 #define pictogram inputs
-logo <- div(tags$img(src="https://github.com/alexanderdank/MIDI-app/blob/main/MID_V2.jpg?raw=true", 
+logo <- div(tags$img(src="https://github.com/alexanderdank/MIDI-app/blob/main/Transparant%20figures/MID_V2-transparent.png?raw=true", 
                      alt="MI ID logo", 
                      deleteFile=FALSE, 
                      width='200px',height='140px'))
 
-foodmicro <- div(tags$img(src="https://github.com/alexanderdank/MIDI-app/blob/main/Food%20Microbiology.jpg?raw=true", 
+foodmicro <- div(tags$img(src="https://raw.githubusercontent.com/alexanderdank/MIDI-app/main/Transparant%20figures/Food_Microbiology-transformed.png", 
                           alt="Food microbiology", 
                           deleteFile=FALSE, 
                           width='140px',height='20px'))
@@ -107,7 +107,7 @@ foodmicro <- div(tags$img(src="https://github.com/alexanderdank/MIDI-app/blob/ma
 
 
 wurlogo <- div(tags$style(".rightAlign{float:right;}"),
-                          tags$img(src="https://github.com/alexanderdank/MIDI-app/blob/main/WUR_RGB_standard_2021.png?raw=true", 
+                          tags$img(src="https://github.com/alexanderdank/MIDI-app/blob/main/Transparant%20figures/WUR%20transparent.png?raw=true", 
                         alt="Food microbiology", 
                         deleteFile=FALSE, 
                         width='340px',
@@ -392,6 +392,17 @@ ui <- dashboardPage(title="Mi ID App",
                              inputId = "wetdry",
                              label = "Does it concern a dry food/high-fat food"),
                            
+                           dropdownButton(status = 'warning', 
+                                          icon = icon("info"), 
+                                          size = 'xs',
+                                          inline=TRUE,
+                                          h4("Information"),
+                                          helpText("Dry (aw < 0.5) or high-fat foods hinder MH inactivation during processing. For such foods, MHs with low risk are reassessed. MHs that remained as low risk after reassessment are removed from the active MHs list, but those that shift to medium or high risk are added."), 
+                                          width = "300px"),
+                           
+                           ## add an info 
+                           
+                           
                            uiOutput('HPPmessage'),
                            
                            uiOutput('HPP600'),
@@ -500,6 +511,14 @@ ui <- dashboardPage(title="Mi ID App",
                                inputId = "dry_spices",
                                label = "Were any unprocessed dry spices added?"),
                              
+                             dropdownButton(status = 'warning', 
+                                            icon = icon("info"), 
+                                            size = 'xs',
+                                            inline=TRUE,
+                                            h4("Information"),
+                                            helpText("Cronobacter spp. and S. aureus have been reported in spices and dried aromatic herbs, but no spice-associated outbreaks or cases of foodborne illness were identified due to these MHs (FAO). Cronobacter spp. is rarely reported to cause any severe incidents in other food products than infant formula, if other products are selected, Cronobacter spp. has a very low risk of causing problems."), 
+                                            width = "300px"),
+                             
                              prettySwitch(
                                inputId = "dry_vitamins",
                                label = "Were any unprocessed dry vitamins and/or other dry ingredients added?”")
@@ -588,10 +607,20 @@ ui <- dashboardPage(title="Mi ID App",
                              sliderTextInput(
                                inputId = "aw",
                                label = "Indicate the Aw of your product:", 
-                               choices = c(seq(from = 0, to = 1, by = 0.1)),
+                               choices = c(seq(from = 0, to = 1, by = 0.01)),
                                grid = TRUE,
                                selected = 1
                              )),
+                           
+                           dropdownButton(status = 'warning', 
+                                          icon = icon("info"), 
+                                          size = 'xs',
+                                          inline=TRUE,
+                                          h4("Information"),
+                                          helpText("Exceptions for some resistant strains of MHs have been reported in acidic or dry foods: 1) in acidic foods of pH <4.5, some non-STEC strains may survive and grow; 2) in foods with aw < 0.99 but > 0.90, B. cereus, C. botulinum, C. pefringens, Cronobacter spp., STEC, non-STEC, may also survive and grow. Only S. aureus can grow at aw ~ 0.83- 0.85."), 
+                                          width = "300px"),
+                           
+                           
                            pickerInput(
                              inputId = "chaintemp",
                              label = "What is the used temperature during the production and transportation chain", 
@@ -730,17 +759,17 @@ server <- function(input, output, session) {
   ## define a reactive for which url to use (depending on which tab you are)
   urlDSS <- reactive ({
     if (input$sidebar == "welcome") {
-      urlDSS <- "https://github.com/alexdank/pics/blob/main/Microbial%20Hazards%20Identification%20DSS%20procedures.jpg?raw=true"
+      urlDSS <- "https://raw.githubusercontent.com/alexanderdank/MIDI-app/7ec4254d1da3ea4e2747efe17d9b49368035e862/Figure%201-%20Microbial%20Hazards%20Identification%20DSS%20procedures.jpg"
     } else if (input$sidebar == "Food_selec") {
-      urlDSS <- "https://github.com/alexdank/pics/blob/main/Microbial%20Hazards%20Identification%20DSS%20procedures%20step%201.jpg?raw=true"
+      urlDSS <- "https://github.com/alexanderdank/MIDI-app/blob/main/Transparant%20figures/step1.jpg?raw=true"
     } else if (input$sidebar == "Processing_variables") {
-      urlDSS <- "https://github.com/alexdank/pics/blob/main/Microbial%20Hazards%20Identification%20DSS%20procedures%20step%202.jpg?raw=true"
+      urlDSS <- "https://github.com/alexanderdank/MIDI-app/blob/main/Transparant%20figures/step2.jpg?raw=true"
     } else if (input$sidebar == "Recontamination") {
-      urlDSS <- "https://github.com/alexdank/pics/blob/main/Microbial%20Hazards%20Identification%20DSS%20procedures%20step%203.jpg?raw=true"
+      urlDSS <- "https://github.com/alexanderdank/MIDI-app/blob/main/Transparant%20figures/step%203.jpg?raw=true"
     } else if (input$sidebar == "Product_char") {
-      urlDSS <-  "https://github.com/alexdank/pics/blob/main/Microbial%20Hazards%20Identification%20DSS%20procedures%20step%204.jpg?raw=true"
+      urlDSS <-  "https://github.com/alexanderdank/MIDI-app/blob/main/Transparant%20figures/step%204.jpg?raw=true"
     } else if (input$sidebar == "Product_ass") {
-      urlDSS <-  "https://github.com/alexdank/pics/blob/main/Microbial%20Hazards%20Identification%20DSS%20procedures%20step%205.jpg?raw=true"
+      urlDSS <-  "https://github.com/alexanderdank/MIDI-app/blob/main/Transparant%20figures/step%205.jpg?raw=true"
     }
   })
   
@@ -887,10 +916,10 @@ server <- function(input, output, session) {
     
     if(input$wetdry == TRUE) {
       processhazdry <- processhazard %>% filter(Hazard_inactivation5D_dryfood == "no")
-      tbl_hazarddry <- processhazdry %>% select(Food_main_category, Type, Genus, Species, Hazard_inactivation5D_dryfood)
+      tbl_hazarddry <- processhazdry %>% select(Food_main_category, Type, Genus, Species, Hazard_inactivation5D_dryfood, Estimated_risk_basedonhazardsurvival_dryorhighfat)
     } else{
       processhazdry <- processhazard %>% filter(Hazard_inactivation5D == "no")
-      tbl_hazarddry <- processhazdry %>% select(Food_main_category, Type, Genus, Species, Hazard_inactivation5D)
+      tbl_hazarddry <- processhazdry %>% select(Food_main_category, Type, Genus, Species, Hazard_inactivation5D, Estimated_risk_basedonhazardsurvival)
     }
     
     ## save as table output 1
@@ -903,12 +932,14 @@ server <- function(input, output, session) {
     to_display2 <- as.data.frame(to_display2 %>% mutate(Food_main_category = str_to_sentence(Food_main_category)) %>%
                                    dplyr::rename("Food main category" = Food_main_category))
     if(input$wetdry == TRUE) {
-      to_display2 <- datatable(to_display2 %>% dplyr::rename("5 log inactivation?" = Hazard_inactivation5D_dryfood),
+      to_display2 <- datatable(to_display2 %>% dplyr::rename("5 log inactivation?" = Hazard_inactivation5D_dryfood,
+                                                             "Estimated risk based on survival" = Estimated_risk_basedonhazardsurvival_dryorhighfat),
                                options = list(
                                  language = list(
                                    zeroRecords = "There are no identified microbial hazards under the selected scenarios")))
     } else {
-      to_display2 <- datatable(to_display2 %>% dplyr::rename("5 log inactivation?" = Hazard_inactivation5D),
+      to_display2 <- datatable(to_display2 %>% dplyr::rename("5 log inactivation?" = Hazard_inactivation5D,
+                                                             "Estimated risk based on survival" = Estimated_risk_basedonhazardsurvival),
       options = list(
         rowCallback = JS(rowCallback),
         language = list(
@@ -1140,7 +1171,7 @@ server <- function(input, output, session) {
                     "Growth needed" = Growth_needed,
                     "Survival Aw 0.2 - 0.5" = Survival_Aw0205,
                     "Survival Aw 0.5 - 0.9" = Survival_Aw0509,
-                    "Growth above Aw 0.9" = Growth_aboveAw0.9,
+                    "Growth above Aw 0.9" = Growth_aboveAw0.99,
                    # "Food main category"= Food_main_category,
                     "Survive or grow below pH 4.5" = Growth_below4.5,
                     "Survive or grow above pH 10" = Growth_above10,
@@ -1218,7 +1249,7 @@ server <- function(input, output, session) {
                     "Growth needed" = Growth_needed,
                     "Survival Aw 0.2 - 0.5" = Survival_Aw0205,
                     "Survival Aw 0.5 - 0.9" = Survival_Aw0509,
-                    "Growth above Aw 0.9" = Growth_aboveAw0.9,
+                    "Growth above Aw 0.9" = Growth_aboveAw0.99,
                    # "Food main category"= Food_main_category,
                     "Survive or grow below pH 4.5" = Growth_below4.5,
                     "Survive or grow above pH 10" = Growth_above10,
@@ -1407,8 +1438,7 @@ server <- function(input, output, session) {
       if("Viruses" %in% tabtemp$Type){
       showModal(modalDialog(
         title = h2("Important message"),
-        h3("The survival of viruses and parasites in the selected scenario is unknown, but please note that no growth in foods 
-        is needed for parasites or viruses to cause illness in humans."),
+        h3("The survival of viruses and parasites in the selected scenario is unknown. Both cannot replicate in foods, but please note that no growth in foods is needed for parasites or viruses to cause illness in humans."),
         easyClose = TRUE
       )) } else if ("Parasites" %in% tabtemp$Type) {
           showModal(modalDialog(

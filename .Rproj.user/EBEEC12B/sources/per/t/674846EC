@@ -1,0 +1,26 @@
+{
+    "id": "674846EC",
+    "path": "~/Alex/MiID_app/app.R",
+    "project_path": "app.R",
+    "type": "r_source",
+    "hash": "3108234361",
+    "contents": "",
+    "dirty": false,
+    "created": 1682334320795.0,
+    "source_on_save": false,
+    "relative_order": 1,
+    "properties": {
+        "source_window_id": "",
+        "Source": "Source",
+        "cursorPosition": "1179,4",
+        "scrollLine": "1165"
+    },
+    "folds": "",
+    "lastKnownWriteTime": 1682880825,
+    "encoding": "UTF-8",
+    "collab_server": "",
+    "source_window": "",
+    "last_content_update": 1682880825471,
+    "read_only": false,
+    "read_only_alternatives": []
+}
