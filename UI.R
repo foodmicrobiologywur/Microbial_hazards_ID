@@ -18,14 +18,14 @@ library(shinybrowser)
 library(bslib)
 library(spsComps)
 
-source("Functions/rowCallback45.R")
-source("Functions/rowCallback.R")
-source("Functions/renderfunc.R")
-source("Functions/infobutton.R")
-source("Text_and_graphics/informationtext.R")
-source("Text_and_graphics/Barcols.R")
-source("Text_and_graphics/defaultpictograms.R")
-source('datas_and_inputoptions.R')
+source("./Functions/rowcallback45.R")
+source("./Functions/rowcallback.R")
+source("./Functions/renderfunc.R")
+source("./Functions/infobutton.R")
+source("./Text_and_graphics/Informationtext.R")
+source("./Text_and_graphics/Barcols.R")
+source("./Text_and_graphics/defaultpictograms.R")
+source('./datas_and_inputoptions.R')
 
 
 # Define UI for application that draws a histogram
@@ -424,19 +424,22 @@ ui <- dashboardPage(title="Mi ID App",
                                           box(width = 12,
                                               tags$div(
                                                 barcol,
+                                              
                                                 sliderTextInput(
                                                   inputId = "pH",
                                                   label = "Indicate the pH of your product:", 
                                                   choices = c(seq(from = 1, to = 14, by = 0.1)),
-                                                  grid = TRUE,
-                                                  selected = 7
-                                                )),
+                                                 grid = TRUE,
+                                                  selected = 7 
+                                               )
+                                               
+                                                ),
                                               tags$div(
                                                 barcol1,
                                                 sliderTextInput(
                                                   inputId = "aw",
                                                   label = "Indicate the Aw of your product:", 
-                                                  choices = c(seq(from = 0, to = 1, by = 0.1)),
+                                                  choices = c(seq(from = 0, to = 1, by = 0.01)),
                                                   grid = TRUE,
                                                   selected = 1
                                                 )),
@@ -455,6 +458,13 @@ ui <- dashboardPage(title="Mi ID App",
                                               materialSwitch(
                                                 inputId = "tempabuse",
                                                 label = "Was there any temperature abuse (uncontrolled temperature) during the production and transportation chain?",
+                                                value = FALSE, 
+                                                status = "danger"
+                                              ),
+                                              #swtich to remove bacteria present that need growth for pathogenic effect but are not growing
+                                              materialSwitch(
+                                                inputId = "needgrowth",
+                                                label = "Do you want to remove bacteria that are identified as hazard and need growth for pathogenicity but are not actively growing in the current scenario?",
                                                 value = FALSE, 
                                                 status = "danger"
                                               )
@@ -564,7 +574,6 @@ ui <- dashboardPage(title="Mi ID App",
                         
                       ))
 )
-
 
 
 

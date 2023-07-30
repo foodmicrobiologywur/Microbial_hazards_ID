@@ -18,14 +18,14 @@ library(shinybrowser)
 library(bslib)
 library(spsComps)
 
-source("Functions/rowCallback45.R")
-source("Functions/rowCallback.R")
-source("Functions/renderfunc.R")
-source("Functions/infobutton.R")
-source("Text_and_graphics/informationtext.R")
-source("Text_and_graphics/Barcols.R")
-source("Text_and_graphics/defaultpictograms.R")
-source('datas_and_inputoptions.R')
+source("./Functions/rowcallback45.R")
+source("./Functions/rowcallback.R")
+source("./Functions/renderfunc.R")
+source("./Functions/infobutton.R")
+source("./Text_and_graphics/Informationtext.R")
+source("./Text_and_graphics/Barcols.R")
+source("./Text_and_graphics/defaultpictograms.R")
+source('./datas_and_inputoptions.R')
 # Define server logic required to draw a histogram
 
 ## get the system date
@@ -34,7 +34,7 @@ sysdate <- Sys.Date()
 
 
 server <- function(input, output, session) {
- 
+  
   
   ## define a reactive for which url to use (depending on which tab you are)
   urlDSS <- reactive ({
@@ -308,74 +308,137 @@ server <- function(input, output, session) {
     
     ## Make a table with all columns
     tbl_4 <- left_join(tbl_4, PPC)
+    tbl_4 <- left_join(tbl_4, PPC_GO)
     
     ## Extract all rows with "no growth for pH"
     #No_growth_tbl_4 <- tbl_4 %>% filter(Growth_needed == "no")
     exbac <- tbl_4 %>% filter(Type != "Bacteria")
     
     
-    ## Filter based on pH
-    if(input$pH < 4.5) {
-      tbl_4 <- tbl_4 %>% filter(Growth_below4.5 == "yes")
-      tbl_4 <- tbl_4 %>% full_join(exbac)
-    }  else {
-      if(input$pH > 10){
-        tbl_4 <- tbl_4 %>% filter(Growth_above10 == "yes")
-        tbl_4 <- tbl_4 %>% full_join(exbac)
-      }
-      else {
-        tbl_4 <- tbl_4
-      }
+    ## Filter based on pH (using the 4_step_GO)
+   # if(input$pH < 4.5) {
+  #    tbl_4 <- tbl_4 %>% filter(Growth_below4.5 == "yes")
+  #    tbl_4 <- tbl_4 %>% full_join(exbac)
+  #  }  else {
+   #   if(input$pH > 10){
+  #      tbl_4 <- tbl_4 %>% filter(Growth_above10 == "yes")
+  #      tbl_4 <- tbl_4 %>% full_join(exbac)
+  #    }
+   #   else {
+    #    tbl_4 <- tbl_4
+    #  }
+  #  }
+    
+    
+    ## define temperatures for different selection of user
+    if(input$chaintemp == "Room temperature") {
+      temperature <- 20
+    } else if(input$chaintemp == "1-4 degrees Celcius"){
+      temperature <- 1
+    } else {
+      temperature <- -20
     }
     
-    ## filter based on Aw
-    if(input$aw < 0.5) {
-      tbl_4 <- tbl_4 %>% filter(Survival_Aw0205 == "yes")
-      tbl_4 <- tbl_4 %>% full_join(exbac)
-    }  else {
-      if(input$aw >= 0.5 & input$aw < 0.9){
-        ## Assume pathogens needing growth and aw above 0.9 to die between 0.5 and 0.9
-        staph <- tbl_4 %>% filter(Genus == "Staphylococcus")
-        tbl_4 <- tbl_4 %>% filter(Survival_Aw0509 == "yes")
-        tbl_4 <- full_join(staph, tbl_4)
-        tbl_4 <- tbl_4 %>% full_join(exbac)
+    if(input$tempabuse == TRUE) {
+      if(temperature == -20) {
+        temperature <- 1
+      } else if(temperature == 1){
+        temperature <- temperature + 5
+      } else {
+        
       }
-      else {
-        tbl_4 <- tbl_4
-      }
+    } else {
+      
     }
+    
+    
+   
+    ## Filter based on pH using the 4_step_cardinal
+    bacs <- tbl_4 %>% filter(Type == "Bacteria") %>% 
+                      filter(pHmin < as.numeric(input$pH),
+                           pHmax > as.numeric(input$pH),
+                           awmin < as.numeric(input$aw),
+                           awmax >= as.numeric(input$aw),
+                           Tmin < temperature,
+                           Tmax > temperature)
+    
+    
+    ## check whether or not to remove identified hazards not growing
+    ## first use the input values for the column selection
+    
+    
+    
+    
+  #  if(input$needgrowth == TRUE) {
+   #   bacs_growthneed <- bacs %>% filter(Growth_needed == "yes")
+  #    bacs_nogrowth <- bacs %>% filter(Growth_needed != "no")
+
+      
+   #   if(input$pH < 4.5) {
+  #      bacs_growthneed <- bacs_growthneed %>% filter(Growth_below4.5 == "yes")
+    #  } else if(input$pH > 10) {
+    #    bacs_growthneed <- bacs_growthneed %>% filter(Growth_above10 == "yes")
+    #  }
+      
+     #bacs <- rbind(bacs_growthneed, bacs_nogrowth) 
+    #}
+    
+    
+    
+    ## bind the table together
+    tbl_4 <- rbind(bacs, exbac)
+    
+    
+    
+     
+    ## filter based on Aw
+ #   if(input$aw < 0.5) {
+  #    tbl_4 <- tbl_4 %>% filter(Survival_Aw0205 == "yes")
+  #    tbl_4 <- tbl_4 %>% full_join(exbac)
+  #  }  else {
+  #    if(input$aw >= 0.5 & input$aw < 0.9){
+        ## Assume pathogens needing growth and aw above 0.9 to die between 0.5 and 0.9
+  #      staph <- tbl_4 %>% filter(Genus == "Staphylococcus")
+   #     tbl_4 <- tbl_4 %>% filter(Survival_Aw0509 == "yes")
+  #      tbl_4 <- full_join(staph, tbl_4)
+   #     tbl_4 <- tbl_4 %>% full_join(exbac)
+  #    }
+  #    else {
+   #     tbl_4 <- tbl_4
+  #    }
+  #  }
     
     
     ## temperature during chain
-    if(input$tempabuse == FALSE) {
-      if(input$chaintemp == "Room temperature") {
-        No_growth_tbl_4 <- tbl_4 %>% filter(Growth_needed == "no")
-        tbl_4 <- tbl_4 %>% filter(grow_RT == "yes")
-        tbl_4 <- full_join(No_growth_tbl_4, tbl_4)
-      } else {
-        if(input$chaintemp == "1-4 degrees Celcius") {
-          tbl_4 <- tbl_4 %>% filter(survive_or_grow_1_4_degrees == "yes")
-          tbl_4 <- full_join(tbl_4, exbac)
-          # 
-        } else {
-          if(input$chaintemp == "Below 0 degrees Celcius") {
-            tbl_4 <- tbl_4 %>% filter(survive_or_grow_below_0_degrees == "yes")
-            tbl_4 <- full_join(tbl_4, exbac)
+ #   if(input$tempabuse == FALSE) {
+  #    if(input$chaintemp == "Room temperature") {
+   #     No_growth_tbl_4 <- tbl_4 %>% filter(Growth_needed == "no")
+    #    tbl_4 <- tbl_4 %>% filter(grow_RT == "yes")
+     #   tbl_4 <- full_join(No_growth_tbl_4, tbl_4)
+    #  } else {
+    #    if(input$chaintemp == "1-4 degrees Celcius") {
+     #     tbl_4 <- tbl_4 %>% filter(survive_or_grow_1_4_degrees == "yes")
+      #    tbl_4 <- full_join(tbl_4, exbac)
+      #    # 
+      #  } else {
+      #    if(input$chaintemp == "Below 0 degrees Celcius") {
+      #      tbl_4 <- tbl_4 %>% filter(survive_or_grow_below_0_degrees == "yes")
+      #      tbl_4 <- full_join(tbl_4, exbac)
             
-          }
-        }
-      }
+       #   }
+        #}
+    #  }
       # define logic when there is temp abuse
-    } else {
-      if(input$chaintemp == "Below 0 degrees Celcius") {
-        tbl_4 <- tbl_4 %>% filter(survive_or_grow_1_4_degrees == "yes")
-        tbl_4 <- full_join(tbl_4, exbac)
-      } else {
-        No_growth_tbl_4 <- tbl_4 %>% filter(Growth_needed == "no")
-        tbl_4 <- tbl_4 %>% filter(grow_RT == "yes")
-        tbl_4 <- full_join(No_growth_tbl_4, tbl_4)
-      }
-    }
+  #  } else {
+   #   if(input$chaintemp == "Below 0 degrees Celcius") {
+    #    tbl_4 <- tbl_4 %>% filter(survive_or_grow_1_4_degrees == "yes")
+     #   tbl_4 <- full_join(tbl_4, exbac)
+     # } else {
+     #   No_growth_tbl_4 <- tbl_4 %>% filter(Growth_needed == "no")
+     #   tbl_4 <- tbl_4 %>% filter(grow_RT == "yes")
+    #    tbl_4 <- full_join(No_growth_tbl_4, tbl_4)
+    #  }
+    #}
     
     
     Hazard_count <- tbl_1() %>% select(c("Type", "Genus", "Species", "Count"))
@@ -383,55 +446,55 @@ server <- function(input, output, session) {
     
   }) 
   
-  targets_to_hide <- reactive ({
+ # targets_to_hide <- reactive ({
     ## make a reactive with targets_to_hide
     #variable for hiding or showing dt columns
-    targets_to_hide <- c()
+  #  targets_to_hide <- c()
     
     ## conditions for pH
-    if(input$pH > 4.5 & input$pH < 10) {
-      targets_to_hide <- append(targets_to_hide, "Survive or grow above pH 10")
-      targets_to_hide <- append(targets_to_hide, "Survive or grow below pH 4.5")
-    } else if (input$pH < 4.5) {
-      targets_to_hide <- append(targets_to_hide, "Survive or grow above pH 10")
-    } else {
-      targets_to_hide <- append(targets_to_hide, "Survive or grow below pH 4.5")
-    }
+   # if(input$pH > 4.5 & input$pH < 10) {
+    #  targets_to_hide <- append(targets_to_hide, "Survive or grow above pH 10")
+     # targets_to_hide <- append(targets_to_hide, "Survive or grow below pH 4.5")
+    #} else if (input$pH < 4.5) {
+    #  targets_to_hide <- append(targets_to_hide, "Survive or grow above pH 10")
+    #} else {
+  #    targets_to_hide <- append(targets_to_hide, "Survive or grow below pH 4.5")
+  #  }
     
     ## conditions for aW
-    if(input$aw < 0.5) {
-      targets_to_hide <- targets_to_hide
-    }  else  if (input$aw >= 0.5 & input$aw < 0.9){
+  #  if(input$aw < 0.5) {
+  #    targets_to_hide <- targets_to_hide
+  #  }  else  if (input$aw >= 0.5 & input$aw < 0.9){
       ## Assume pathogens needing growth and aw above 0.9 to die between 0.5 and 0.9
-      targets_to_hide <- append(targets_to_hide, "Survival Aw 0.2 - 0.5")
-    } else {
-      targets_to_hide <- append(targets_to_hide, "Survival Aw 0.2 - 0.5")
-      targets_to_hide <- append(targets_to_hide, "Survival Aw 0.5 - 0.9")
-    }
+  #    targets_to_hide <- append(targets_to_hide, "Survival Aw 0.2 - 0.5")
+  #  } else {
+   #   targets_to_hide <- append(targets_to_hide, "Survival Aw 0.2 - 0.5")
+    #  targets_to_hide <- append(targets_to_hide, "Survival Aw 0.5 - 0.9")
+  #  }
     
     ## Conditions for temp
-    if(input$tempabuse == FALSE) {
+   # if(input$tempabuse == FALSE) {
       #define logic for when there is no temp abuse
-      if(input$chaintemp == "Room temperature") {
-        targets_to_hide <- append(targets_to_hide, "Survive or grow refridgerator")
-        targets_to_hide <- append(targets_to_hide, "Survive or grow in freezer")
+    #  if(input$chaintemp == "Room temperature") {
+    #    targets_to_hide <- append(targets_to_hide, "Survive or grow refridgerator")
+    #    targets_to_hide <- append(targets_to_hide, "Survive or grow in freezer")
         
-      } else if (input$chaintemp == "1-4 degrees Celcius") {
-        targets_to_hide <- append(targets_to_hide, "Survive or grow in freezer")
-      } else {
-        targets_to_hide <- targets_to_hide
-      }
-    } else {
+    #  } else if (input$chaintemp == "1-4 degrees Celcius") {
+    #    targets_to_hide <- append(targets_to_hide, "Survive or grow in freezer")
+    #  } else {
+    #    targets_to_hide <- targets_to_hide
+    #  }
+  #  } else {
       #define logic when there is temp abuse
-      targets_to_hide <- append(targets_to_hide, "Survive or grow refridgerator")
-      targets_to_hide <- append(targets_to_hide, "Survive or grow in freezer")
-    }
-  })
+   #   targets_to_hide <- append(targets_to_hide, "Survive or grow refridgerator")
+  #    targets_to_hide <- append(targets_to_hide, "Survive or grow in freezer")
+  #  }
+#  })
   
   
   ## output code for tabpanel
   output$tbl_proces <- DT::renderDT({
-    targets_to_hide <- targets_to_hide()
+ #   targets_to_hide <- targets_to_hide()
     # load the df
     to_display4 <- tbl_proces()
     
@@ -446,15 +509,15 @@ server <- function(input, output, session) {
       relocate(Count, .after = Species) %>% relocate(Hazard_origin2, .before = Type) %>%
       dplyr::rename(#"Risk Association" = Count,
         "Hazard origin" = Hazard_origin2,
-        "Growth needed" = Growth_needed,
-        "Survival Aw 0.2 - 0.5" = Survival_Aw0205,
-        "Survival Aw 0.5 - 0.9" = Survival_Aw0509,
-        "Growth above Aw 0.9" = Growth_aboveAw0.99,
+        "Growth needed" = Growth_needed)
+     #   "Survival Aw 0.2 - 0.5" = Survival_Aw0205,
+      #  "Survival Aw 0.5 - 0.9" = Survival_Aw0509,
+      #  "Growth above Aw 0.9" = Growth_aboveAw0.99,
         # "Food main category"= Food_main_category,
-        "Survive or grow below pH 4.5" = Growth_below4.5,
-        "Survive or grow above pH 10" = Growth_above10,
-        "Survive or grow refridgerator" = survive_or_grow_1_4_degrees,
-        "Survive or grow in freezer" = survive_or_grow_below_0_degrees)
+     #   "Survive or grow below pH 4.5" = Growth_below4.5,
+      #  "Survive or grow above pH 10" = Growth_above10,
+       # "Survive or grow refridgerator" = survive_or_grow_1_4_degrees,
+        #"Survive or grow in freezer" = survive_or_grow_below_0_degrees)
     
     
     
@@ -466,13 +529,14 @@ server <- function(input, output, session) {
         "Type", "Genus", "Species", 
         "Count", 
         `Growth needed`, 
-        `Survive or grow below pH 4.5`, 
-        `Survive or grow above pH 10`, 
-        `Survival Aw 0.2 - 0.5`,
-        `Survival Aw 0.5 - 0.9`,
+        Remarks,
+        #`Survive or grow below pH 4.5`, 
+        #`Survive or grow above pH 10`, 
+        #`Survival Aw 0.2 - 0.5`,
+        #`Survival Aw 0.5 - 0.9`,
         #`Growth above Aw 0.9`,
-        `Survive or grow refridgerator`,
-        `Survive or grow in freezer`
+        #`Survive or grow refridgerator`,
+        #`Survive or grow in freezer`
       ))
     ## rename the column Risk association to include the button
     Risk_text <- tags$span(
@@ -494,13 +558,14 @@ server <- function(input, output, session) {
                     rowCallback = JS(rowCallback45),
                     language = list(
                       zeroRecords =  "There are no identified microbial hazards under the selected scenarios"),
-                    scrollX = TRUE,
-                    columnDefs = list(
-                      list(#targets = "_all", 
-                        render = JS(render),
-                        visible=FALSE, targets=c(targets_to_hide))))) %>% formatStyle(
+                   scrollX = TRUE)) %>%
+                  #  columnDefs = list(
+                   #   list(#targets = "_all", 
+                    #    render = JS(render))
+                  #)
+               formatStyle(
                           columns = "Growth needed",
-                          backgroundColor = styleEqual(c("no","yes"), c('tomato', 'khaki'))
+                         backgroundColor = styleEqual(c("no","yes"), c('tomato', 'khaki'))
                         )
   })
   
@@ -523,7 +588,7 @@ server <- function(input, output, session) {
   ## output code for tabpanel
   output$tbl_filt <- DT::renderDT({
     to_display5 <- tbl_filt()
-    targets_to_hide <- targets_to_hide()
+  #  targets_to_hide <- targets_to_hide()
     to_display5 <- to_display5 %>% arrange(desc(Count)) %>% mutate(Count = case_when(
       Count == 0 ~ "Low Risk (0)",
       Count == 1 ~ "Low Risk (1)",
@@ -535,30 +600,31 @@ server <- function(input, output, session) {
       #dplyr::mutate(Food_main_category = str_to_sentence(Food_main_category)) %>%
       dplyr::rename(#"Risk Association" = Count,
         "Hazard origin" = Hazard_origin2,
-        "Growth needed" = Growth_needed,
-        "Survival Aw 0.2 - 0.5" = Survival_Aw0205,
-        "Survival Aw 0.5 - 0.9" = Survival_Aw0509,
-        "Growth above Aw 0.9" = Growth_aboveAw0.99,
+        "Growth needed" = Growth_needed)
+     #   "Survival Aw 0.2 - 0.5" = Survival_Aw0205,
+      #  "Survival Aw 0.5 - 0.9" = Survival_Aw0509,
+       # "Growth above Aw 0.9" = Growth_aboveAw0.99,
         # "Food main category"= Food_main_category,
-        "Survive or grow below pH 4.5" = Growth_below4.5,
-        "Survive or grow above pH 10" = Growth_above10,
-        "Survive or grow refridgerator" = survive_or_grow_1_4_degrees,
-        "Survive or grow in freezer" = survive_or_grow_below_0_degrees)
+      #  "Survive or grow below pH 4.5" = Growth_below4.5,
+      #  "Survive or grow above pH 10" = Growth_above10,
+      #  "Survive or grow refridgerator" = survive_or_grow_1_4_degrees,
+      #  "Survive or grow in freezer" = survive_or_grow_below_0_degrees)
     
     
     to_display5 <- to_display5 %>% 
       dplyr::select(c(#`Food main category`,
         `Hazard origin`, 
         "Type", "Genus", "Species", 
-        "Count", 
+        "Count",
         `Growth needed`, 
-        `Survive or grow below pH 4.5`, 
-        `Survive or grow above pH 10`, 
-        `Survival Aw 0.2 - 0.5`,
-        `Survival Aw 0.5 - 0.9`,
+        Remarks,
+     #   `Survive or grow below pH 4.5`, 
+      #  `Survive or grow above pH 10`, 
+      #  `Survival Aw 0.2 - 0.5`,
+      #  `Survival Aw 0.5 - 0.9`,
         #`Growth above Aw 0.9`,
-        `Survive or grow refridgerator`,
-        `Survive or grow in freezer`
+      #  `Survive or grow refridgerator`,
+       # `Survive or grow in freezer`
       ))
     
     Risk_text <- tags$span(
@@ -571,21 +637,22 @@ server <- function(input, output, session) {
     ) %>% 
       as.character()
     
-    datatable(to_display5 %>% mutate(`Hazard origin` = str_to_sentence(`Hazard origin`)) %>% 
-                rename(!!Risk_text:=Count),
-              escape = FALSE,
-              options = list(
-                rowCallback = JS(rowCallback45),
-                language = list(
-                  zeroRecords =  "There are no identified microbial hazards under the selected scenarios"),
-                scrollX = TRUE,
-                columnDefs = list(
-                  list(#targets = "_all", 
-                    render = JS(render),
-                    visible=FALSE, targets=c(targets_to_hide))))) %>% formatStyle(
-                      columns = "Growth needed",
-                      backgroundColor = styleEqual(c("no","yes"), c('tomato', 'khaki'))
-                    )
+    DT::datatable(to_display5 %>% mutate(`Hazard origin` = str_to_sentence(`Hazard origin`)) %>%
+                    rename(!!Risk_text:=Count),
+                  escape=FALSE,
+                  options = list(
+                    rowCallback = JS(rowCallback45),
+                    language = list(
+                      zeroRecords =  "There are no identified microbial hazards under the selected scenarios"),
+                    scrollX = TRUE)) %>%
+    #  columnDefs = list(
+    #   list(#targets = "_all", 
+    #    render = JS(render))
+    #)
+      formatStyle(
+               columns = "Growth needed",
+              backgroundColor = styleEqual(c("no","yes"), c('tomato', 'khaki'))
+            )
   })
   
   

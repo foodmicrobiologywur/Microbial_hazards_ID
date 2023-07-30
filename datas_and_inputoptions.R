@@ -49,7 +49,8 @@ recontamination$Food_main_category = "Recontamination"
 
 
 ### Product properties characteristics
-PPC <- read_excel("HI_Microbial_hazards_identification_processed_database.xlsx", sheet = "Step_4_GO")
+PPC <- read_excel("HI_Microbial_hazards_identification_processed_database.xlsx", sheet = "Step_4_cardinal")
+PPC_GO <- read_excel("HI_Microbial_hazards_identification_processed_database.xlsx", sheet = "Step_4_GO")
 
 ##define table for SAFFI selection tab
 SAFFI_table <- read_excel("HI_Microbial_hazards_identification_processed_database.xlsx", sheet = "Step_1_FC_description")

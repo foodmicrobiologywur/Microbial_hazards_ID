@@ -1,13 +1,12 @@
 name: MiID_app
 title: MiID_app
-username:
+username: foodmicrobiologywur
 account: foodmicrobiologywur
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
-appId: 8933828
-bundleId: 7156536
+appId: 9485185
+bundleId: 7479907
 url: https://foodmicrobiologywur.shinyapps.io/MiID_app/
-when: 1682880901.5584
-lastSyncTime: 1682880901.55843
+version: 1
 asMultiple: FALSE
 asStatic: FALSE
