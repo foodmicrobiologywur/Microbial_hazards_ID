@@ -88,7 +88,7 @@ ui <- dashboardPage(title="Mi ID App",
                                            href = "https://docs.google.com/document/d/1T1gOCQ0vZeU3C6PaE2yJJIu1hv-8k152qjBhyeThzRY/edit?usp=sharing"),
                                   
                                   menuItem("Github page", icon = icon("github"),
-                                           href = "https://github.com/alexanderdank")
+                                           href = "https://github.com/foodmicrobiologywur/Microbial_hazards_ID")
                                   
                       )),
  
