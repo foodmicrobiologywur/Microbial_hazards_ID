@@ -29,6 +29,15 @@ please use the GitHub page of the application:
 
 For other questions or comments, please contact:
 
-> KY Claire Yeak at <kahyen.yeak@wur.nl>
+> Dr. KY Claire Yeak at <kahyen.yeak@wur.nl> or at <kahyenclaire.yeak@outlook.com>
 
-> Alexander Dank at <Alexander.dank@wur.nl>
+> Dr. Alexander Dank at <Alexander.dank@outlook.com>
+
+
+### DISCLAIMER
+
+This Microbial Hazard Identification Tool (MiID-DSS) has been developed for educational purposes and is provided as a resource to assist users in understanding microbial hazards (MHs) in food products for infants and young children up to the age of 3 through a systematic MHs analysis decision support system (DSS). The development of this tool was based on research data and established scientific procedures which are reported in the accompanying peer review research paper submitted for publication. DOI: XXX
+
+#### Educational Use Only
+The MiID DSS tool is intended solely for educational purposes and should not be considered a substitute for professional advice or judgment. The creators, developers, and contributors of this Tool make no representations or warranties, express or implied, regarding its accuracy, completeness, or suitability for any specific purpose. Users are solely responsible for the use of the Tool and the decisions they make based on the information it provides. The creators, developers, and contributors shall not be held responsible or liable for any direct, indirect, or consequential damages or consequences arising from the use of the Tool. The creators, developers, and contributors reserve the right to modify, update, or discontinue the Tool at any time without prior notice. By using this Tool, you acknowledge that it is for educational purposes and that you understand and accept the limitations and disclaimers outlined herein. If you do not agree with any part of this disclaimer, please refrain from using the Tool.
+

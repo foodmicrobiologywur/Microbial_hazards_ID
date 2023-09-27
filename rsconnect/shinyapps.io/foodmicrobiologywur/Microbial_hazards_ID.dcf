@@ -1,0 +1,10 @@
+name: Microbial_hazards_ID
+title:
+username: foodmicrobiologywur
+account: foodmicrobiologywur
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 8487645
+bundleId: 7735937
+url: https://foodmicrobiologywur.shinyapps.io/Microbial_hazards_ID/
+version: 1

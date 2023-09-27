@@ -134,9 +134,9 @@ server <- function(input, output, session) {
       selected_category <- food_products %>% filter(str_to_sentence(Food_item) %in% selectedfood)
       food_sub_categoryvec <- selected_category %>% pull(Food_subcategory_1)
       
+      
       ## extract relevant hazards from categorie list
       Hazard_counts <- food_categories %>% filter(Food_subcategory_1 %in% food_sub_categoryvec)
-
       
       ## print table of releant counts and sort based on highest hazard
       Hazard_counts <- Hazard_counts %>% select(1:14) %>% filter(Count > 0) %>% arrange(desc(Count), Food_subcategory_1) %>% select(-Food_subcategory_1)
