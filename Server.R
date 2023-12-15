@@ -122,11 +122,73 @@ server <- function(input, output, session) {
               ), escape=FALSE)
     
   })
+  ## define logic for displaying the numeric input options on tab 1 
+  output$numeric_input <- renderUI({
+    selected_user_hazards <- input$Manual_hazards_selection
+    
+    numeric_input_list <- lapply(selected_user_hazards, function(option){
+      if(option %in% manual_user_options){
+        numericInput(
+          inputId = paste0("numericcounthazard", option),
+          label = paste("Enter count of user hazard", option),
+          value = 0,
+          max = 5
+        )
+      }
+      })
+      
+      tagList(numeric_input_list)
+  })
+  
+  ### retrieve the datqa frame from dynamically rendered values
+  # Reactive data frame based on dynamic inputs
+  user_hazards <- reactive({
+    selected_user_hazards <- input$Manual_hazards_selection
+    
+    # Retrieve values from dynamic inputs
+    input_values <- sapply(selected_user_hazards, function(i) {
+      input_id <- paste0("numericcounthazard", i)
+      input_value <- input[[input_id]]
+      return(input_value)
+    })
+    
+    # Create a data frame with input$num_inputs and input values
+    if(length(input_values) == 0){
+      data.frame()
+    } else {
+    data.frame(Genusspecies = selected_user_hazards, Count = input_values)
+    }
+  })
+  
+  
+  
+  ## make the user defined table for row bind to table 1 based on user input on food category
+  tbl_0 <- reactive({
+    manual_user_table <- data.frame(Genus = character(), Species = character(), 
+                                    Food_main_category = character(), Type = character(), 
+                                    Count = numeric(), stringsAsFactors = FALSE)
+    
+    if (nrow(user_hazards()) > 0) {
+      types <- food_categories %>% select(Type, Genus, Species)
+      user_table <- user_hazards() %>%
+        separate(Genusspecies, into = c("Genus", "Species"), sep = " ", extra = "merge") %>%
+        left_join(types, by = c("Species", "Genus")) %>%
+        mutate(Food_main_category = "Manual user input") %>%
+        select(Genus, Species, Food_main_category, Type, Count) %>%
+        distinct(Type, Genus, Species, .keep_all = TRUE)
+      
+      # Combine the data frames
+      manual_user_table <- bind_rows(manual_user_table, user_table)
+    }
+    
+    
+    return(manual_user_table)
+  })
   
   
   ### display a table for selecting and showing the relevant food categories and risks to the user
   tbl_1 <- reactive({
-    
+    manual_user_table <- tbl_0()
     if(input$radio == 1) {
       ## make tbl for showing hazards
       selectedfood <- input$food_selection
@@ -143,7 +205,8 @@ server <- function(input, output, session) {
       print(Hazard_counts)
       
       ## save as table output 1
-      tbl_1 <- Hazard_counts
+      tbl_1 <- bind_rows(Hazard_counts, manual_user_table)
+      
     } else {
       food_sub_categoryvec <- input$category_selection
       
@@ -156,7 +219,19 @@ server <- function(input, output, session) {
       print(Hazard_counts)
       
       ## save as table output 1
-      tbl_1 <- Hazard_counts
+      tbl_1 <- bind_rows(Hazard_counts,manual_user_table)
+    }
+    
+    tbl_1 <- tbl_1 %>% group_by(Type, Genus, Species) %>% 
+      mutate(Count = sum(Count)) %>% #change count based on user input
+      mutate(Count = if_else(Count > 5, 5, Count))
+      })
+  
+  ## display warning if count is above 5
+  output$Countwarning <- renderText({
+    if(max(user_hazards()$Count) > 0){
+     text <- "Counts are added to the original count already attributed to a hazard if it was already present in the table.
+     Counts can never be higher than 5, as this has been set as the maximum of the scale." 
     }
   })
   
