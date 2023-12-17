@@ -203,14 +203,15 @@ ui <- dashboardPage(title="Mi ID App",
                                           ))),
                                   
                                   ##options for user to enter own hazards and counts
-                                  fluidRow(box(width = 12),
+                                  fluidRow(div(class="col-lg-6",
+                                               box(width = 12,
                                            pickerInput(
                                              inputId = "Manual_hazards_selection",
                                              label = "Manual selection", 
                                              choices = manual_user_options,
-                                             multiple = TRUE)),
+                                             multiple = TRUE),
                                   uiOutput("numeric_input"),
-                                  verbatimTextOutput("Countwarning"),
+                                  textOutput("Countwarning")))),
                                   
                                   
                                   ## display the saffi table when people select saffi

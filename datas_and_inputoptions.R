@@ -64,3 +64,4 @@ PTE_DES <- read_excel("HI_Microbial_hazards_identification_processed_database.xl
 manual_options <- food_categories %>% mutate(full_label = if_else(!is.na(Species), glue("{Genus} {Species}"), Genus))
 manual_options <- manual_options %>% distinct(full_label, .keep_all = TRUE) %>% select(Genus, Species, full_label)
 manual_user_options <- manual_options$full_label
+
