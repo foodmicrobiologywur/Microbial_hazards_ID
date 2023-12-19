@@ -191,7 +191,10 @@ ui <- dashboardPage(title="Mi ID App",
                                               
                                               conditionalPanel(
                                                 condition = "input.radio == 1 && input.food_selection == 'Ready to eat fish based meal for children'",
-                                                helpText("You selected fish and fish products. Note: MiID DSS excludes the Anisakis Simplex hazard associated only with raw fish products due to rare consumption of infants and toddlers (0-3) in the EU. Please include it in your list if raw fish consumption is relevant in your region. If fish and fish products are selected without processing variables, Anisakis Simplex is added back to the list of hazard table.")
+                                                helpText("You selected fish and fish products. Note: MiID DSS excludes the Anisakis Simplex hazard associated only with raw fish products due to rare consumption of infants and toddlers (0-3) in the EU. Please include it in your list if raw fish consumption is relevant in your region. If fish and fish products are selected without processing variables, Anisakis Simplex is added back to the list of hazard table."),
+                                                prettySwitch(
+                                                  inputId = "ready2eatfishchild",
+                                                  label = HTML("Do you want to add <i>Anisakis Simplex</i> to hazard list?"))
                                               )),
                                               
                                               conditionalPanel(
@@ -206,8 +209,12 @@ ui <- dashboardPage(title="Mi ID App",
                                                   multiple = FALSE),
                                                 conditionalPanel(
                                                   condition = "input.radio == 2 && input.category_selection == 'Fish and fish products'",
-                                                  helpText("You selected fish and fish products. Note: MiID DSS excludes the Anisakis Simplex hazard associated only with raw fish products due to rare consumption of infants and toddlers (0-3) in the EU. Please include it in your list if raw fish consumption is relevant in your region. If fish and fish products are selected without processing variables, Anisakis Simplex is added back to the list of hazard table.")
-                                                )
+                                                  helpText("You selected fish and fish products. Note: MiID DSS excludes the Anisakis Simplex hazard associated only with raw fish products due to rare consumption of infants and toddlers (0-3) in the EU. Please include it in your list if raw fish consumption is relevant in your region. If fish and fish products are selected without processing variables, Anisakis Simplex is added back to the list of hazard table."),
+                                                  prettySwitch(
+                                                    inputId = "rawfishchild",
+                                                    label = HTML("Do you want to add <i>Anisakis Simplex</i> to hazard list?"))
+                                                
+                                                  )
                                               ),
                                               ## define the color and outline of the knowledge rules box
                                               tags$style(HTML("

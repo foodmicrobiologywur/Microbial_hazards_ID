@@ -185,10 +185,22 @@ server <- function(input, output, session) {
     return(manual_user_table)
   })
   
+  # Your condition to add "Anisakis simplex" based on user input
+  tbl_anisakis <- reactive({
+    
+    if (input$rawfishchild == TRUE | input$ready2eatfishchild == TRUE) {
+      anisakis <- data.frame(Genus = "Anisakis", Species = "simplex", 
+                             Food_main_category = "fish and fish products", Type = "Parasites", Count = 5)
+    } else {
+      anisakis <- data.frame()
+      
+    }
+    
+  })
   
   ### display a table for selecting and showing the relevant food categories and risks to the user
   tbl_1 <- reactive({
-    manual_user_table <- tbl_0()
+    manual_user_table <- rbind(tbl_0(), tbl_anisakis())
     if(input$radio == 1) {
       ## make tbl for showing hazards
       selectedfood <- input$food_selection
@@ -222,11 +234,15 @@ server <- function(input, output, session) {
       tbl_1 <- bind_rows(Hazard_counts,manual_user_table)
     }
     
+    ## mutate count if people have added manual user counts
     tbl_1 <- tbl_1 %>% group_by(Type, Genus, Species) %>% 
       mutate(Count = sum(Count)) %>% #change count based on user input
-      mutate(Count = if_else(Count > 5, 5, Count))
+      mutate(Count = if_else(Count > 5, 5, Count)) %>% ungroup()
+  
+
       })
   
+    
   ## display warning if count is above 5
   output$Countwarning <- renderText({
     if(max(user_hazards()$Count) > 0){
@@ -266,15 +282,15 @@ server <- function(input, output, session) {
     selechazard <- left_join(tbl_1, inactivationsheet, by =c("Type", "Genus", "Species"))
     
     ##Filter based on which thermal processing user entered
-    processhazard <- selechazard %>% filter(Processing_condition %in% input$processingvar)
+    processhazard <- selechazard %>% filter(Processing_condition %in% c(input$processingvar,NA))
     
     ## select to show either wet or dry column based on user input
     
     if(input$wetdry == TRUE) {
-      processhazdry <- processhazard %>% filter(Hazard_inactivation5D_dryfood == "no")
+      processhazdry <- processhazard %>% filter(Hazard_inactivation5D_dryfood %in% c("no",NA))
       tbl_hazarddry <- processhazdry %>% select(Food_main_category, Type, Genus, Species, Hazard_inactivation5D_dryfood)
     } else{
-      processhazdry <- processhazard %>% filter(Hazard_inactivation5D == "no")
+      processhazdry <- processhazard %>% filter(Hazard_inactivation5D %in% c("no",NA))
       tbl_hazarddry <- processhazdry %>% select(Food_main_category, Type, Genus, Species, Hazard_inactivation5D)
     }
     
@@ -466,6 +482,8 @@ server <- function(input, output, session) {
     Hazard_count <- tbl_1() %>% select(c("Type", "Genus", "Species", "Count"))
     tbl_4 <- left_join(tbl_4, Hazard_count, by = c("Type", "Genus", "Species"))
     
+    
+    tbl_4 <- bind_rows(tbl_4,tbl_anisakis())
   })
   
   ## output code for tabpanel
