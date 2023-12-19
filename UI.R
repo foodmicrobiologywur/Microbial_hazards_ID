@@ -108,7 +108,8 @@ ui <- dashboardPage(title="Mi ID App",
                         
                       ## Welcome tab
                         tabItem(tabName = "welcome", 
-                                h2("Welcome!"),
+                                h2(HTML("<span style='font-family: Pacifico, cursive; font-size: 32px; font-weight: bold; color: #004E6F '>Welcome!</span>"),
+                                   class = "left"),
                                 wurlogo, logo, foodmicro,
                                 
                                 ## the rows with text and image
@@ -151,7 +152,25 @@ ui <- dashboardPage(title="Mi ID App",
                                             uiOutput("dss_scheme_image2"))),
                                       
                                       div(class="col-lg-6", 
-                                          box(width=12, h2("Food Selection"),
+                                          box(width=12, 
+                                              h2("Food Selection",
+                                                 actionButton(
+                                                   "info_food_selection",
+                                                   icon("info"),
+                                                   size = '10px',
+                                                   onclick = "toggleInfo()",
+                                                   title = "The tool currently includes only foods for infants and toddlers (0-3 years). Other foods will be added in the future."
+                                                 )
+                                              ),
+                                              
+                                              dropdownButton(status = 'warning', 
+                                                             icon = icon("exclamation-triangle"), 
+                                                             size = 's',
+                                                             inline=TRUE,
+                                                             h3("Alert"),
+                                                             helpText("if raw products are consumed, please select the same food items, proceed to step 2 and then select the option none under processing variables. Example of 
+                                                                  raw fish: select RTE- fish based meal (FoodEx2) or fish and fish products (Food Categories)"), 
+                                                             width = "300px"),
                                               
                                               radioButtons("radio", label = "Do you want to use FoodEx2 selection or SAFFI food categories", 
                                                            choices = list("FoodEx2" = 1, "SAFFI food categories" = 2),
@@ -168,7 +187,12 @@ ui <- dashboardPage(title="Mi ID App",
                                                   inputId = "food_selection",
                                                   label = "Select food item", 
                                                   choices = inputoptions,
-                                                  multiple = FALSE)),
+                                                  multiple = FALSE),
+                                              
+                                              conditionalPanel(
+                                                condition = "input.radio == 1 && input.food_selection == 'Ready to eat fish based meal for children'",
+                                                helpText("You selected fish and fish products. Note: MiID DSS excludes the Anisakis Simplex hazard associated only with raw fish products due to rare consumption of infants and toddlers (0-3) in the EU. Please include it in your list if raw fish consumption is relevant in your region. If fish and fish products are selected without processing variables, Anisakis Simplex is added back to the list of hazard table.")
+                                              )),
                                               
                                               conditionalPanel(
                                                 condition = "input.radio == 2",       
@@ -179,7 +203,11 @@ ui <- dashboardPage(title="Mi ID App",
                                                   inputId = "category_selection",
                                                   label = "Select food category", 
                                                   choices = inputoptionssaffi,
-                                                  multiple = FALSE)
+                                                  multiple = FALSE),
+                                                conditionalPanel(
+                                                  condition = "input.radio == 2 && input.category_selection == 'Fish and fish products'",
+                                                  helpText("You selected fish and fish products. Note: MiID DSS excludes the Anisakis Simplex hazard associated only with raw fish products due to rare consumption of infants and toddlers (0-3) in the EU. Please include it in your list if raw fish consumption is relevant in your region. If fish and fish products are selected without processing variables, Anisakis Simplex is added back to the list of hazard table.")
+                                                )
                                               ),
                                               ## define the color and outline of the knowledge rules box
                                               tags$style(HTML("
@@ -203,15 +231,44 @@ ui <- dashboardPage(title="Mi ID App",
                                           ))),
                                   
                                   ##options for user to enter own hazards and counts
-                                  fluidRow(div(class="col-lg-6",
-                                               box(width = 12,
-                                           pickerInput(
-                                             inputId = "Manual_hazards_selection",
-                                             label = "Manual selection", 
-                                             choices = manual_user_options,
-                                             multiple = TRUE),
-                                  uiOutput("numeric_input"),
-                                  textOutput("Countwarning")))),
+                                  fluidRow(
+                                    column(width = 12,  ## Adjust the width as needed
+                                           box(
+                                             width = 12,
+                                             pickerInput(
+                                               inputId = "Manual_hazards_selection",
+                                               label = "Manual selection for users",
+                                               choices = manual_user_options,
+                                               multiple = TRUE
+                                             ),
+                                             
+                                             dropdownButton(
+                                               status = 'warning',
+                                               icon = icon("info"),
+                                               size = 'xs',
+                                               inline = TRUE,
+                                               h3("Information"),
+                                               helpText("Salmonella enterica Typhi (which causes typhoid fever) was removed from the prioritized list as it is no longer a threat in the EU due 
+                                                      to tight regulations on controlling the quality of water supply, sanitation, hygiene, and food (ECDC, 2018). In cases of untreated water 
+                                                      sources, common boiling practices before consumption significantly reduce the risk of MH-associated foodborne diseases. As this scenario 
+                                                      very infrequently results in the direct cause of illness, it is not included in the scope of this study. Nonetheless, it is still a concern
+                                                      in developing countries with poor hygiene practices (Keddy, 2022; Muresu et al., 2020). Anisakis simplex which is typically found in raw fish, 
+                                                      undercooked, lightly salted fish, or squids harbouring the larvae (Murata et al., 2021) was also excluded as raw fish products are rarely
+                                                      consumed by infants and toddlers (0 – 3 years) in the EU (EFSA Food Consumption Database), but it is important to take note that children < 3 
+                                                      years old in Asia may consume raw fish products, e.g., the consumption of sushi in Japan, marinated raw seafood in Thailand, and jellyfish in 
+                                                      China. The removal of the two MHs mentioned above gives rise to the prioritized list of 33 MHs in this tool. "),
+                                               width = "500px"
+                                             ),
+                                             
+                                             helpText("If more evidence is available from other reliable sources, please select the corresponding hazards
+                                                       and enter the evidence counts here."),
+                                             uiOutput("numeric_input"),
+                                             verbatimTextOutput("Countwarning"),
+                                             style = "font-size: 16px;"
+                                           )
+                                    )
+                                  ),
+                                  
                                   
                                   
                                   ## display the saffi table when people select saffi

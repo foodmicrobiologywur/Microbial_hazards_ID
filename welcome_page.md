@@ -4,7 +4,7 @@ output:
   html_document: default
 ---
 ## Microbial Hazards Identification Decision Support System  
-## (Mi ID)
+## (MiID DSS)
 
 This application serves as a tool to identify microbial hazards (MHs) in
 food products for infants and young children up to the age of 3 through
