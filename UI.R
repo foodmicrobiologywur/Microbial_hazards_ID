@@ -31,7 +31,7 @@ source('./datas_and_inputoptions.R')
 # Define UI for application that draws a histogram
 ui <- dashboardPage(title="Mi ID App",
                     ## header
-                    dashboardHeader(title = "Microbial Hazards Identification Decision Support System (Mi ID)",
+                    dashboardHeader(title = "Microbial Hazards Identification Decision Support System (MiID DSS)",
                                     titleWidth = 900),
                     
                     ## Sidebar
@@ -159,7 +159,7 @@ ui <- dashboardPage(title="Mi ID App",
                                                    icon("info"),
                                                    size = '10px',
                                                    onclick = "toggleInfo()",
-                                                   title = "The tool currently includes only foods for infants and toddlers (0-3 years). Other foods will be added in the future."
+                                                   title = "The tool currently includes only foods for infants and toddlers (0- < 3 years). Other foods will be added in the future."
                                                  )
                                               ),
                                               
@@ -207,6 +207,7 @@ ui <- dashboardPage(title="Mi ID App",
                                                   label = "Select food category", 
                                                   choices = inputoptionssaffi,
                                                   multiple = FALSE),
+                                                
                                                 conditionalPanel(
                                                   condition = "input.radio == 2 && input.category_selection == 'Fish and fish products'",
                                                   helpText("You selected fish and fish products. Note: MiID DSS excludes the Anisakis Simplex hazard associated only with raw fish products due to rare consumption of infants and toddlers (0-3) in the EU. Please include it in your list if raw fish consumption is relevant in your region. If fish and fish products are selected without processing variables, Anisakis Simplex is added back to the list of hazard table."),
@@ -216,6 +217,15 @@ ui <- dashboardPage(title="Mi ID App",
                                                 
                                                   )
                                               ),
+                                              
+                                              conditionalPanel(
+                                                condition = "input.radio == 2 && input.category_selection == 'Food of non animal origin' && input.Food_subcategory_1 == 'herbs and spices'",
+                                                helpText("You selected herbs and spices. Although S. aureus has been reported in spices and dried aromatic herbs,
+                                                         no spice-associated outbreaks or cases of foodborne illness were identified due to this MH (FAO, 2022; FAO & WHO, 2022).
+                                                         User has the option in keep or exclude this MH from the list of identified MHs")
+                                                
+                                          ),
+                                          
                                               ## define the color and outline of the knowledge rules box
                                               tags$style(HTML("
                 .box.box-solid.box-primary>.box-header {
@@ -263,7 +273,7 @@ ui <- dashboardPage(title="Mi ID App",
                                                       undercooked, lightly salted fish, or squids harbouring the larvae (Murata et al., 2021) was also excluded as raw fish products are rarely
                                                       consumed by infants and toddlers (0 – 3 years) in the EU (EFSA Food Consumption Database), but it is important to take note that children < 3 
                                                       years old in Asia may consume raw fish products, e.g., the consumption of sushi in Japan, marinated raw seafood in Thailand, and jellyfish in 
-                                                      China. The removal of the two MHs mentioned above gives rise to the prioritized list of 33 MHs in this tool. "),
+                                                      China. The removal of the two MHs mentioned above gives rise to the prioritized list of 34 MHs in this tool. "),
                                                width = "500px"
                                              ),
                                              
@@ -320,6 +330,17 @@ ui <- dashboardPage(title="Mi ID App",
                                               hr(),
                                               helpText(h3("Important"), "Select the applied processing technique. Please check whether your processing conditions are in line with the description in the table."),
                                               hr(),
+                                              dropdownButton(status = 'warning', 
+                                                             icon = icon("exclamation-triangle"), 
+                                                             size = 's',
+                                                             inline=TRUE,
+                                                             h3("Alert"),
+                                                             helpText("This tool accounts for the preformed S. aureus toxin in foods. which remains active
+                                                                       after pasteurization and boiling for 30 min, and is stable at 121°C for 28 min 
+                                                                       (Bhunia, 2008; Fernandes, 2009).Identification post-processing focuses on the toxin, 
+                                                                       not vegetative cells.Users not considering this can opt to exclude S. aureus from the list."), 
+                                                             width = "300px"),
+                                              
                                               
                                               pickerInput(
                                                 inputId = "processingvar",
