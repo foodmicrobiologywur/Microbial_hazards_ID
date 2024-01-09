@@ -219,7 +219,7 @@ ui <- dashboardPage(title="Mi ID App",
                                               ),
                                               
                                               conditionalPanel(
-                                                condition = paste0('input.radio == 2 && input.category.selection == "Food of non animal origin"'),
+                                                condition = "input.radio == 2 && input.category_selection == 'Herbs and spices'",
                                                 helpText("You selected herbs and spices. Although S. aureus has been reported in spices and dried aromatic herbs,
                                                          no spice-associated outbreaks or cases of foodborne illness were identified due to this MH (FAO, 2022; FAO & WHO, 2022).
                                                          User has the option in keep or exclude this MH from the list of identified MHs")
