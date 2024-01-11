@@ -244,11 +244,15 @@ server <- function(input, output, session) {
   
     
   ## display warning if count is above 5
+  observeEvent(input$Manual_hazards_selection, {
   output$Countwarning <- renderText({
+    
+    input$Manual_hazards_selection
     if(max(user_hazards()$Count) > 0){
      text <- "Counts are added to the original count already attributed to a hazard if it was already present in the table.
      Counts can never be higher than 5, as this has been set as the maximum of the scale." 
     }
+  })
   })
   
   output$tbl1 <- DT::renderDT({
