@@ -1,23 +1,5 @@
-library(rlang)
-library(shinydashboard)
-library(shinydashboardPlus)
-library(dashboardthemes)
-library(readxl)
-library(dplyr)
-library(tidyverse)
-library(shinyWidgets)
-library(writexl)
-library(DT)
-library(data.table)
-library(markdown)
-library(shinyjs)
-library(bslib)
-library(shinyFeedback)
-library(glue)
-library(shinybrowser)
-library(bslib)
-library(spsComps)
 
+# source needed scripts
 source("./Functions/rowcallback45.R")
 source("./Functions/rowcallback.R")
 source("./Functions/renderfunc.R")
@@ -34,56 +16,37 @@ sysdate <- Sys.Date()
 
 
 server <- function(input, output, session) {
-  
-  
-  ## define a reactive for which url to use (depending on which tab you are) #add ?raw=true at the end of the link for correct display
-  urlDSS <- reactive ({
-    if (input$sidebar == "welcome") {
-      urlDSS <- "https://github.com/kahyenclaireyeak/webpics_MiID/blob/6caafaf6e7ed03a1e0a9927aeaeb951db0a06378/Figure%201-%20Microbial%20Hazards%20Identification%20DSS%20procedures.jpg?raw=true"
-    } else if (input$sidebar == "Food_selec") {
-      urlDSS <- "https://github.com/kahyenclaireyeak/webpics_MiID/blob/6caafaf6e7ed03a1e0a9927aeaeb951db0a06378/step%201.jpg?raw=true"
-    } else if (input$sidebar == "Processing_variables") {
-      urlDSS <- "https://github.com/kahyenclaireyeak/webpics_MiID/blob/6caafaf6e7ed03a1e0a9927aeaeb951db0a06378/step2.jpg?raw=true"
-    } else if (input$sidebar == "Recontamination") {
-      urlDSS <- "https://github.com/kahyenclaireyeak/webpics_MiID/blob/6caafaf6e7ed03a1e0a9927aeaeb951db0a06378/step%203.jpg?raw=true"
-    } else if (input$sidebar == "Product_char") {
-      urlDSS <-  "https://github.com/kahyenclaireyeak/webpics_MiID/blob/6caafaf6e7ed03a1e0a9927aeaeb951db0a06378/step%204.jpg?raw=true"
-    } else if (input$sidebar == "Product_ass") {
-      urlDSS <-  "https://github.com/kahyenclaireyeak/webpics_MiID/blob/6caafaf6e7ed03a1e0a9927aeaeb951db0a06378/step%205.jpg?raw=true"
-    }
-    return(urlDSS)
-  })
-  
+
   ## define renderImage for DSS
   output$dss_scheme_image1 <-renderUI ({
-    tags$img(src=urlDSS(), 
+    tags$img(src="https://github.com/kahyenclaireyeak/webpics_MiID/blob/6caafaf6e7ed03a1e0a9927aeaeb951db0a06378/Figure%201-%20Microbial%20Hazards%20Identification%20DSS%20procedures.jpg?raw=true", 
              alt="Decision support system graphical overview", deleteFile=FALSE)
   })
   
   output$dss_scheme_image2 <-renderUI ({
-    tags$img(src=urlDSS(), 
+    tags$img(src="https://github.com/kahyenclaireyeak/webpics_MiID/blob/6caafaf6e7ed03a1e0a9927aeaeb951db0a06378/step%201.jpg?raw=true", 
              alt="Decision support system graphical overview", deleteFile=FALSE)
   })
   
   output$dss_scheme_image3 <-renderUI ({
-    tags$img(src=urlDSS(), 
+    tags$img(src="https://github.com/kahyenclaireyeak/webpics_MiID/blob/6caafaf6e7ed03a1e0a9927aeaeb951db0a06378/step2.jpg?raw=true", 
              alt="Decision support system graphical overview", deleteFile=FALSE)
   })
   
   
   output$dss_scheme_image4 <-renderUI ({
-    tags$img(src=urlDSS(), 
+    tags$img(src="https://github.com/kahyenclaireyeak/webpics_MiID/blob/6caafaf6e7ed03a1e0a9927aeaeb951db0a06378/step%203.jpg?raw=true", 
              alt="Decision support system graphical overview", deleteFile=FALSE)
   })
   
   
   output$dss_scheme_image5 <-renderUI ({
-    tags$img(src=urlDSS(), 
+    tags$img(src="https://github.com/kahyenclaireyeak/webpics_MiID/blob/6caafaf6e7ed03a1e0a9927aeaeb951db0a06378/step%204.jpg?raw=true", 
              alt="Decision support system graphical overview", deleteFile=FALSE)
   })
   
   output$dss_scheme_image6 <-renderUI ({
-    tags$img(src=urlDSS(), 
+    tags$img(src="https://github.com/kahyenclaireyeak/webpics_MiID/blob/6caafaf6e7ed03a1e0a9927aeaeb951db0a06378/step%205.jpg?raw=true", 
              alt="Decision support system graphical overview", deleteFile=FALSE)
   })
   
