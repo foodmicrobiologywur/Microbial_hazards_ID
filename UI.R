@@ -79,7 +79,7 @@ ui <- dashboardPage(title="Mi ID App",
                                   ## Continue to Mira-DSS
                                   
                                   menuItem("Continue to Risk Ranking",icon=icon("ranking-star"),
-                                           href = "https://foodlab-upct.shinyapps.io/Risk-ranking/#welcome"),
+                                           href = "https://foodmicrobiologywur.shinyapps.io/MIcrobial_hazards_RAnking/"),
                                   
                                   ## set a horizontal line
                                   hr(),
@@ -681,7 +681,7 @@ ui <- dashboardPage(title="Mi ID App",
                                     box(width = 12, title = "Information", status = "warning", solidHeader 
                                         = TRUE,
                                         HTML("The identification results shown here are not ranked. This will be addressed in the next Microbial hazards risk ranking web-based app (Mira).
-             Available at <a href='https://foodlab-upct.shinyapps.io/Risk-ranking/#welcome' target='_blank'> Mira-DSS https://foodlab-upct.shinyapps.io/Risk-ranking/#welcome </a>.")),
+             Available at <a href='https://foodmicrobiologywur.shinyapps.io/MIcrobial_hazards_RAnking/' target='_blank'> Mira-DSS https://foodmicrobiologywur.shinyapps.io/MIcrobial_hazards_RAnking/ </a>.")),
                                     downloadButton("dl", "Download"),
                                     useShinyjs(),
                                     actionButton("refresh6", "Refresh session")))
